@@ -1,8 +1,8 @@
 import {cart, removeFromCart, updateDeliveryOption} from '../../data/cart.js'
-import { products } from '../../data/products.js';
+import { products, getProduct } from '../../data/products.js';
 import { formatCurrency } from '../utils/money.js';
 import dayjs from ' https://unpkg.com/dayjs@1.11.10/esm/index.js';
-import {deliveryOptions} from '../../data/deliveryOptions.js'
+import {deliveryOptions, getDeliveryOption} from '../../data/deliveryOptions.js'
 
 export function renderOrderSummary() {
 
@@ -10,34 +10,12 @@ export function renderOrderSummary() {
 
     cart.forEach((cartItem) => {
         const productId = cartItem.productId;
-        let radioCount = 1;
-        let matchingProduct;
-
-        products.forEach((product) => {
-            if (productId === product.id)
-            {
-                matchingProduct = product;
-            }
-        });
+        
+        const matchingProduct =getProduct(productId);
 
         const deliveryOptionId = cartItem.deliveryOptionId;
 
-        let deliveryOption;
-
-        deliveryOptions.forEach((option) => {
-            // console.log('Option ID:', option.id, 'type:', typeof option.id);
-            // console.log('DeliveryOptionId:', deliveryOptionId, 'type:', typeof deliveryOptionId);
-            if (option.id === deliveryOptionId)
-            {
-                deliveryOption = option;
-            }
-        });
-
-        // // Add a check for undefined deliveryOption
-        // if (!deliveryOption) {
-        //     console.error('No matching delivery option found for ID:', deliveryOptionId);
-        //     deliveryOption = deliveryOptions[0]; // Use default option as fallback
-        // }
+        const deliveryOption = getDeliveryOption(deliveryOptionId);
 
         const currentDay = dayjs();
         const deliveryDate = currentDay.add(deliveryOption.deliveryDays, 'days');
@@ -83,7 +61,7 @@ export function renderOrderSummary() {
             </div>
         </div>
     `;
-    radioCount++;
+    //radioCount++;
     });
 
     function deliveryOptionsHTML(matchingProduct, cartItem) {
